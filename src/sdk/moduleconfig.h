@@ -26,7 +26,7 @@
  *   to add multiple entries.
  */
 #define MODULE_NAME "Lambda"
-#define MODULE_VERSION "0.1.0a"
+#define MODULE_VERSION "0.2.0a"
 #define MODULE_AUTHOR "[GM] NWC"
 #define MODULE_URL ""
 #define MODULE_LOGTAG "lambda"
