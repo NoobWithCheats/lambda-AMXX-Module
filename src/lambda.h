@@ -151,9 +151,4 @@ class PlayerMngr
     if (!MF_IsPlayerValid(x)) {                                                 \
         MF_LogError(amx, AMX_ERR_NATIVE, "Invalid player %d", x);               \
         return 0;                                                               \
-    } else {                                                                    \
-        if (!MF_IsPlayerIngame(x)) {                                            \
-            MF_LogError(amx, AMX_ERR_NATIVE, "Disconnect player %d", x);        \
-            return 0;                                                           \
-        }                                                                       \
     }
