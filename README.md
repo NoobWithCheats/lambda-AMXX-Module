@@ -38,7 +38,7 @@ public client_connect(id)
 public client_disconnected(id)
 {
     if (lx_player_get_group_count(id)) lx_player_clear_groups(id);
-    if (lx_player_get_permission_count(id, false)) lx_player_clear_permissionsif(id);
+    if (lx_player_get_permission_count(id, false)) lx_player_clear_permissions(id);
 }
 ```
 
