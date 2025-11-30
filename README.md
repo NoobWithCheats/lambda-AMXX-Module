@@ -54,6 +54,7 @@ Visual Studio 2017 (C++17 standard) and later
 <pre>
 cmake >= 3.15
 GCC >= 9.4 (Optional)
+ninja-build
 </pre>
 
 ### Building
