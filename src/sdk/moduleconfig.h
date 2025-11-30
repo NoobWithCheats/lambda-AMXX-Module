@@ -26,9 +26,9 @@
  *   to add multiple entries.
  */
 #define MODULE_NAME "Lambda"
-#define MODULE_VERSION "0.2.0a"
+#define MODULE_VERSION "0.4.0a"
 #define MODULE_AUTHOR "[GM] NWC"
-#define MODULE_URL ""
+#define MODULE_URL "https://github.com/NoobWithCheats/lambda-AMXX-Module"
 #define MODULE_LOGTAG "lambda"
 #define MODULE_LIBRARY "lambda"
 #define MODULE_LIBCLASS ""

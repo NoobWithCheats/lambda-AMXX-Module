@@ -80,6 +80,16 @@ size_t GroupMngr::getImmunity() const
     return m_immunity;
 }
 
+void GroupMngr::setPrefix(std::string_view name)
+{
+    m_prefix = name;
+}
+
+std::string_view GroupMngr::getPrefix() const
+{
+    return m_prefix;
+}
+
 size_t AccessMngr::createGroup(std::string_view name)
 {
     auto group = findGroup(name);
@@ -143,8 +153,10 @@ void AccessMngr::destroyGroup(size_t group)
     m_groups.insert(iter, nullptr);
 }
 
-size_t AccessMngr::getGroupCount() const
+size_t AccessMngr::getGroupCount(bool size) const
 {
+    if (size) return m_groups.size();
+
     size_t count = 0;
 
     for (size_t i = 0; i < m_groups.size(); i++)
@@ -223,8 +235,10 @@ void AccessMngr::destroyPermission(size_t permission)
     m_permissions.insert(iter, nullptr);
 }
 
-size_t AccessMngr::getPermissionCount() const
+size_t AccessMngr::getPermissionCount(bool size) const
 {
+    if (size) return m_permissions.size();
+
     size_t count = 0;
 
     for (size_t i = 0; i < m_permissions.size(); i++)
@@ -390,6 +404,16 @@ void PlayerMngr::setImmunity(size_t immuity)
 size_t PlayerMngr::getImmunity() const
 {
     return m_immunity;
+}
+
+void PlayerMngr::setPrefix(std::string_view name)
+{
+    m_prefix = name;
+}
+
+std::string_view PlayerMngr::getPrefix() const
+{
+    return m_prefix;
 }
 
 void PlayerMngr::clear()

@@ -43,21 +43,27 @@ class GroupMngr
     size_t getPermissionCount() const;
     // Установить иммунитет группе
     void setImmunity(size_t immunity);
-
+    
     const auto& getPermissions() const
     {
         return m_permissions;
     }
 
     std::string_view getName() const;
-
+    // Получить иммунитет группы
     size_t getImmunity() const;
+    // Установить префикс группе
+    void setPrefix(std::string_view name);
+    // Получить префикс группы
+    std::string_view getPrefix() const;
 
   private:
     // имя группы
     std::string m_name;
     // иммунитет группы
     size_t m_immunity = 0;
+    // Префикс группы
+    std::string m_prefix;
     // разрешения группы
     std::set<std::shared_ptr<std::string>> m_permissions;
 };
@@ -78,7 +84,7 @@ class AccessMngr
     // Удаляет группу
     void destroyGroup(size_t group);
     // Получает кол-во групп
-    size_t getGroupCount() const;
+    size_t getGroupCount(bool size) const;
 
     // Создать разрешение, возращаеть указатель на разрешение
     size_t createPermission(std::string_view name);
@@ -89,7 +95,7 @@ class AccessMngr
     // Удалет разрешение
     void destroyPermission(size_t permission);
     // Получает кол-во разрешений
-    size_t getPermissionCount() const;
+    size_t getPermissionCount(bool size) const;
 
     // Полная очиcтка Групп и Разрешений.
     void clear();
@@ -132,9 +138,12 @@ class PlayerMngr
 
     // Установить иммунитет игроку
     void setImmunity(size_t immunity);
-    
+    // Получить иммунитет игрока
     size_t getImmunity() const;
-
+    // Установить префикс игроку
+    void setPrefix(std::string_view name);
+    // Получить префикс игрока
+    std::string_view getPrefix() const;
 
     void clear();
 
@@ -145,6 +154,8 @@ class PlayerMngr
     std::set<std::shared_ptr<GroupMngr>> m_groups;
     // вектор с разрешениями игрока
     std::set<std::shared_ptr<std::string>> m_permissions;
+    // Префикс игрока
+    std::string m_prefix;
 };
 
 #define CHECK_PLAYER(x)                                                         \

@@ -73,6 +73,13 @@ native lx_group_size();
 native lambda_handle:lx_group_destroy(pGroup);
 
 /**
+ * Clears groups.
+ * 
+ * @return          lamnda_handle
+ */
+native lambda_handle:lx_group_clears();
+
+/**
  * Adds a permission to the group.
  * 
  * @param pGroup        A pointer to the group.
@@ -133,11 +140,32 @@ native lx_group_get_immunity(pGroup);
  * Set the group's immunity.
  * 
  * @param pGroup		A pointer to the group.
- * @param immunity      Immunity
+ * @param immunity      Immunity.
  * 
  * @return 				lambda_handle
  */
 native lambda_handle:lx_group_set_immunity(pGroup, immunity);
+
+/**
+ * Gets the group's prefix.
+ * 
+ * @param pGroup		A pointer to the group.
+ * @param szPrefix      An array for the received prefix.
+ * @param iLen          The size of the array.
+ * 
+ * @return 				lambda_handle
+ */
+native lambda_handle:lx_group_get_prefix(pGroup, szPrefix[], iLen);
+
+/**
+ * Set the group's prefix.
+ * 
+ * @param pGroup		A pointer to the group.
+ * @param szPrefix      The prefix for the groups.
+ * 
+ * @return 				lambda_handle
+ */
+native lambda_handle:lx_group_set_prefix(pGroup, szPrefix[]);
 
 /*---------------------------------------------------------------------------------------------------*/
 //                                            Permission                                             //
@@ -189,6 +217,13 @@ native lx_permission_size();
  * @return              lambda_handle
  */
 native lambda_handle:lx_permission_destroy(pPermission);
+
+/**
+ * Clears permission.
+ * 
+ * @return              lambda_handle
+ */
+native lambda_handle:lx_permission_clears();
 
 /*---------------------------------------------------------------------------------------------------*/
 //                                             Players                                               //
@@ -311,6 +346,27 @@ native lx_player_get_immunity(iPlayer);
  */
 native lambda_handle:lx_player_set_immunity(iPlayer, immunity);
 
+/**
+ * Gets the player's prefix.
+ * 
+ * @param iPlayer		The player's index.
+ * @param szPrefix      An array for the received prefix.
+ * @param iLen          The size of the array.
+ * 
+ * @return 				lambda_handle
+ */
+native lambda_handle:lx_player_get_prefix(iPlayer, szPrefix[], iLen);
+
+/**
+ * Sets the player's prefix.
+ * 
+ * @param iPlayer		The player's index.
+ * @param szPrefix      The prefix for the player.
+ * 
+ * @return 				lambda_handle
+ */
+native lambda_handle:lx_player_set_prefix(iPlayer, szPrefix[]);
+
 /*---------------------------------------------------------------------------------------------------*/
 //                                             Forwards                                              //
 /*---------------------------------------------------------------------------------------------------*/
@@ -339,7 +395,14 @@ forward lx_on_group_created(szGroup[], pGroup);
 forward lx_on_group_destroyed(szGroup[], pGroup);
 
 /**
- * Called after removing a permission from a group
+ * Called after groups are cleared.
+ * 
+ * @noreturn
+ */
+forward lx_on_group_cleared();
+
+/**
+ * Called after removing a permission from a group.
  * 
  * @param szGroup           The name of the group.
  * @param pGroup            A pointer to the group.
@@ -383,6 +446,17 @@ forward lx_on_group_cleared_permission(szGroup[], pGroup);
  */
 forward lx_on_group_set_immunity(szGroup[], pGroup, immunity);
 
+/**
+ * It is called after the group's prefix is set.
+ * 
+ * @param szGroup           The name of the group.
+ * @param pGroup            A pointer to the group.
+ * @param szPrefix          An array for the received prefix.
+ * 
+ * @noreturn
+ */
+forward lx_on_group_set_prefix(szGroup[], pGroup, szPrefix[]);
+
 /*---------------------------------------------------------------------------------------------------*/
 //                                            Permission                                             //
 /*---------------------------------------------------------------------------------------------------*/
@@ -407,6 +481,13 @@ forward lx_on_permission_created(szPermission[], pPermission);
  */
 forward lx_on_permission_destroyed(szPermission[], pPermission);
 
+/**
+ * Called after permissions are cleared.
+ * 
+ * @noreturn 
+ */
+forward lx_on_permission_cleared();
+
 /*---------------------------------------------------------------------------------------------------*/
 //                                             Players                                               //
 /*---------------------------------------------------------------------------------------------------*/
@@ -423,7 +504,7 @@ forward lx_on_permission_destroyed(szPermission[], pPermission);
 forward lx_on_player_added_group(iPlayer, szGroup[], pGroup);
 
 /**
- * It is called after the player's group is removed
+ * It is called after the player's group is removed.
  * 
  * @param iPlayer   The player's index.
  * @param szGroup   The name of the permission.
@@ -484,5 +565,15 @@ forward lx_on_player_cleared_permissions(iPlayer);
  * @noreturn
  */
 forward lx_on_player_set_immunity(iPlayer, immunity);
+
+/**
+ * It is called after the player's immunity is prefix.
+ * 
+ * @param iPlayer       The player's index.
+ * @param szPrefix      An array for the received prefix.
+ * 
+ * @noreturn
+ */
+forward lx_on_player_set_prefix(iPlayer, szPrefix[]);
 
 /*--------------END--------------END--------------END--------------END--------------END--------------*/
