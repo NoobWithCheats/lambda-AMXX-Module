@@ -368,6 +368,77 @@ native lambda_handle:lx_player_get_prefix(iPlayer, szPrefix[], iLen);
 native lambda_handle:lx_player_set_prefix(iPlayer, szPrefix[]);
 
 /*---------------------------------------------------------------------------------------------------*/
+//                                              Temp                                                 //
+/*---------------------------------------------------------------------------------------------------*/
+
+/**
+ * Adds a group to a temp array. 
+ * 
+ * @param pGroup        A pointer to the group.
+ * 
+ * @return              lambda_handle
+ */
+native lambda_handle:lx_temp_add_group(pGroup);
+
+/**
+ * Removes the group to a temp array. 
+ * 
+ * @param pGroup        A pointer to the group.
+ * 
+ * @return              lambda_handle
+ */
+native lambda_handle:lx_temp_remove_group(pGroup);
+
+/**
+ * Adds groups to the player.
+ * 
+ * @param iPlayer		The player's index.
+ * 
+ * @return				lambda_handle (lamda_Done)
+ */
+native lambda_handle:lx_temp_copy_groups(iPlayer);
+
+/**
+ * Removes groups in temp array.
+ * 
+ * @return              lambda_handle
+ */
+native bool:lx_temp_clear_groups();
+
+/**
+ * Adds a permission to a temp array. 
+ * 
+ * @param pPermission   A pointer to the permission.
+ * 
+ * @return              lambda_handle
+ */
+native lambda_handle:lx_temp_add_permission(pPermission);
+
+/**
+ * Removes the permissions to a temp array. 
+ * 
+ * @param pPermission   A pointer to the permission.
+ * 
+ * @return              lambda_handle
+ */
+native lambda_handle:lx_temp_remove_permission(pPermission);
+
+/**
+ * Adds permissions to the player.
+ * 
+ * @param iPlayer		The player's index.
+ * 
+ * @return				lambda_handle (lamda_Done)
+ */
+native lambda_handle:lx_temp_copy_permissions(iPlayer);
+
+/**
+ * Removes permissions in temp array.
+ * 
+ * @return              lambda_handle
+ */
+native bool: lx_temp_clear_permissions();
+/*---------------------------------------------------------------------------------------------------*/
 //                                             Forwards                                              //
 /*---------------------------------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------------------------------*/

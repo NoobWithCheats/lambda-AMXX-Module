@@ -17,30 +17,22 @@ std::string_view GroupMngr::getName() const
 
 lambda_handle GroupMngr::addPermission(std::shared_ptr<std::string> permission)
 {
-    if (findPermission(permission))
-    {
-        return lambda_Ready;
-    }
-
-    m_permissions.insert(permission);
-    return lambda_Done;
-}
-
-lambda_handle GroupMngr::removePermission(std::shared_ptr<std::string> permission)
-{
-    auto iter = m_permissions.find(permission);
-
-    if (iter != m_permissions.end())
-    {
-        m_permissions.erase(iter);
-    }
-
-    if (!findPermission(permission))
+    if (m_permissions.insert(permission).second)
     {
         return lambda_Done;
     }
 
-    return lambda_Error;
+    return lambda_Ready;
+}
+
+lambda_handle GroupMngr::removePermission(std::shared_ptr<std::string> permission)
+{
+    if (m_permissions.erase(permission))
+    {
+        return lambda_Done;
+    }
+
+    return lambda_InvalidPermission;
 }
 
 bool GroupMngr::findPermission(std::shared_ptr<std::string> permission)
@@ -262,13 +254,12 @@ void AccessMngr::clear()
 
 lambda_handle PlayerMngr::addGroup(std::shared_ptr<GroupMngr> group)
 {
-    if (findGroup(group))
+    if (m_groups.insert(group).second)
     {
-        return lambda_Ready;
+        return lambda_Done;
     }
 
-    m_groups.insert(group);
-    return lambda_Done;
+    return lambda_Ready;
 }
 
 bool PlayerMngr::findGroup(std::shared_ptr<GroupMngr> group)
@@ -283,19 +274,12 @@ bool PlayerMngr::findGroup(std::shared_ptr<GroupMngr> group)
 
 lambda_handle PlayerMngr::removeGroup(std::shared_ptr<GroupMngr> group)
 {
-    if (!findGroup(group))
-    {
-        return lambda_InvalidGroup;
-    }
-
-    m_groups.erase(group);
-
-    if (!findGroup(group))
+    if (m_groups.erase(group))
     {
         return lambda_Done;
     }
 
-    return lambda_Error;
+    return lambda_InvalidGroup;
 }
 
 bool PlayerMngr::clearGroups()
@@ -328,26 +312,24 @@ lambda_handle PlayerMngr::addPermission(std::shared_ptr<std::string> permission)
 
 lambda_handle PlayerMngr::removePermission(std::shared_ptr<std::string> permission)
 {
-    if (!findPermission(permission, false))
-    {
-        return lambda_InvalidPermission;
-    }
-
-    m_permissions.erase(permission);
-
-    if (!findPermission(permission, false))
+    if (m_permissions.erase(permission))
     {
         return lambda_Done;
     }
 
-    return lambda_Error;
+    return lambda_InvalidPermission;
 }
 
 bool PlayerMngr::findPermission(std::shared_ptr<std::string> permission, bool group)
 {
-    if (!group && m_permissions.find(permission) == m_permissions.end())
+    if (!group)
     {
-        return false;
+        if (m_permissions.find(permission) == m_permissions.end())
+        {
+            return false;
+        }
+
+        return true;
     }
 
     std::set<std::shared_ptr<std::string>> temp = m_permissions;
@@ -420,4 +402,78 @@ void PlayerMngr::clear()
 {
     m_groups.clear();
     m_permissions.clear();
+}
+
+lambda_handle tempMngr::addGroup(std::shared_ptr<GroupMngr> group)
+{
+    if (m_groups.insert(group).second)
+    {
+        return lambda_Done;
+    }
+
+    return lambda_Ready;
+}
+
+lambda_handle tempMngr::removeGroup(std::shared_ptr<GroupMngr> group)
+{
+    if (m_groups.erase(group))
+    {
+        return lambda_Done;
+    }
+
+    return lambda_InvalidGroup;
+}
+
+bool tempMngr::clearGroups()
+{
+    m_groups.clear();
+
+    if (m_groups.size())
+    {
+        return false;
+    }
+
+    return true;
+}
+
+lambda_handle tempMngr::addPermission(std::shared_ptr<std::string> premission)
+{
+    if (m_permissions.insert(premission).second)
+    {
+        return lambda_Done;
+    }
+
+    return lambda_Ready;
+}
+
+void tempMngr::copyGroups(std::set<std::shared_ptr<GroupMngr>>& group)
+{
+    group.insert(m_groups.begin(), m_groups.end());
+}
+
+lambda_handle tempMngr::removePermission(std::shared_ptr<std::string> permission)
+{
+    if (m_permissions.erase(permission))
+    {
+        return lambda_Done;
+    }
+
+    return lambda_InvalidPermission;
+}
+
+bool tempMngr::clearPermissions()
+{
+    m_permissions.clear();
+
+    if (m_permissions.size())
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void tempMngr::copyPermissions(std::set<std::shared_ptr<std::string>>& permission)
+{
+    permission.insert(m_permissions.begin(), m_permissions.end());
 }

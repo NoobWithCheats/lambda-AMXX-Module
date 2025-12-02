@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <map>
 #include <memory>
 
 #define MAX_PLAYERS 32
@@ -107,7 +108,6 @@ class AccessMngr
     std::vector<std::shared_ptr<std::string>> m_permissions;
 };
 
-
 class PlayerMngr
 {
   public:
@@ -145,6 +145,9 @@ class PlayerMngr
     // Получить префикс игрока
     std::string_view getPrefix() const;
 
+    auto& getGroups() { return m_groups; }
+    auto& getPermissions() { return m_permissions; }
+
     void clear();
 
   private:
@@ -156,6 +159,36 @@ class PlayerMngr
     std::set<std::shared_ptr<std::string>> m_permissions;
     // Префикс игрока
     std::string m_prefix;
+};
+
+class tempMngr
+{
+  public:
+    tempMngr() {}
+    ~tempMngr() {}
+
+    // Добавляет группу во временное хранилище
+    lambda_handle addGroup(std::shared_ptr<GroupMngr> group);
+    // Удаляет группу из временного хранилища
+    lambda_handle removeGroup(std::shared_ptr<GroupMngr> group);
+    // Очищает временное хранилище групп
+    bool clearGroups();
+    // Копирует (добавляет) группы из времменого хранилища
+    void copyGroups(std::set<std::shared_ptr<GroupMngr>>& group);
+    // Добавляет разрешение во времменное хранилище
+    lambda_handle addPermission(std::shared_ptr<std::string> premission);
+    // Удаляет разрешение из временного хранилищ
+    lambda_handle removePermission(std::shared_ptr<std::string> permission);
+    // Очищает временное хранилище разрешений
+    bool clearPermissions();
+    // Копирует (добавляет) разрешения из времменого хранилища
+    void copyPermissions(std::set<std::shared_ptr<std::string>>& permission);
+
+  private:
+    // группы
+    std::set<std::shared_ptr<GroupMngr>> m_groups;
+    // разрешениям
+    std::set<std::shared_ptr<std::string>> m_permissions;
 };
 
 #define CHECK_PLAYER(x)                                                         \
