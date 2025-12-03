@@ -3,7 +3,7 @@
 
 std::unique_ptr<AccessMngr> g_AccessMngr;
 std::array<std::unique_ptr<PlayerMngr>, MAX_PLAYERS + 1> g_PlayerMngr;
-std::map<AMX*, tempMngr> g_TempMngr;
+std::map<AMX*, std::array<tempMngr, MAX_PLAYERS + 1>> g_TempMngr;
 
 int Fwd_GroupCreated;
 int	Fwd_GroupDestroyed;
@@ -46,7 +46,7 @@ void DestroyModule()
     }
 }
 
-// native GroupCreate(szGroup[]);
+// native lx_group_create(szGroup[]);
 static cell AMX_NATIVE_CALL GroupCreate(AMX* amx, cell* params)
 {
     enum args { arg_group = 1 };
@@ -58,7 +58,7 @@ static cell AMX_NATIVE_CALL GroupCreate(AMX* amx, cell* params)
     return ptr;
 }
 
-// native GroupFind(szGroup[]);
+// native lx_group_find(szGroup[]);
 static cell AMX_NATIVE_CALL GroupFind(AMX* amx, cell* params)
 {
     enum args { arg_group = 1 };
@@ -68,7 +68,7 @@ static cell AMX_NATIVE_CALL GroupFind(AMX* amx, cell* params)
     return (cell)g_AccessMngr->findGroup(name);
 }
 
-// native GroupGetName(pGroup, szGroup[], iLen);
+// native lx_group_get_name(pGroup, szGroup[], iLen);
 static cell AMX_NATIVE_CALL GroupGetName(AMX* amx, cell* params)
 {
     enum args { arg_group = 1, arg_string = 2, arg_len };
@@ -85,13 +85,13 @@ static cell AMX_NATIVE_CALL GroupGetName(AMX* amx, cell* params)
     return MF_SetAmxString(amx, params[arg_string], name, params[arg_len]);
 }
 
-// native GroupGetCount();
+// native lx_group_size();
 static cell AMX_NATIVE_CALL GroupGetCount(AMX* amx, cell* params)
 {
     return g_AccessMngr->getGroupCount(false);
 }
 
-// native lambda_handle:GroupDestroy(pGroup);
+// native lambda_handle:lx_group_destroy(pGroup);
 static cell AMX_NATIVE_CALL GroupDestroy(AMX* amx, cell* params)
 {
     enum args { arg_group = 1 };
@@ -107,10 +107,13 @@ static cell AMX_NATIVE_CALL GroupDestroy(AMX* amx, cell* params)
     {
        g_PlayerMngr.at(i)->removeGroup(group);
     }
-    
-    for (auto& [key, value] : g_TempMngr)
+
+    for (auto i = 0; i <= MAX_PLAYERS; i++)
     {
-        value.removeGroup(group);
+        for (auto& [key, value] : g_TempMngr)
+        {
+            value.at(i).removeGroup(group);
+        }
     }
 
     g_AccessMngr->destroyGroup(params[arg_group]);
@@ -119,7 +122,7 @@ static cell AMX_NATIVE_CALL GroupDestroy(AMX* amx, cell* params)
     return lambda_Done;
 }
 
-// native lambda_handle:GroupClears();
+// native lambda_handle:lx_group_clears();
 static cell AMX_NATIVE_CALL GroupClears(AMX* amx, cell* params)
 {
     size_t size = g_AccessMngr->getGroupCount(true);
@@ -132,9 +135,12 @@ static cell AMX_NATIVE_CALL GroupClears(AMX* amx, cell* params)
             g_PlayerMngr.at(j)->removeGroup(group);
         }
 
-        for (auto& [key, value] : g_TempMngr)
+        for (auto i = 0; i <= MAX_PLAYERS; i++)
         {
-            value.removeGroup(group);
+            for (auto& [key, value] : g_TempMngr)
+            {
+                value.at(i).removeGroup(group);
+            }
         }
 
         g_AccessMngr->destroyGroup(i);
@@ -144,7 +150,7 @@ static cell AMX_NATIVE_CALL GroupClears(AMX* amx, cell* params)
     return lambda_Done;
 }
 
-// native lambda_handle:GroupAddPermission(pGroup, pPermission);
+// native lambda_handle:lx_group_add_permission(pGroup, pPermission);
 static cell AMX_NATIVE_CALL GroupAddPermission(AMX* amx, cell* params) {
     enum args { arg_group = 1, arg_permission = 2 };
 
@@ -174,7 +180,7 @@ static cell AMX_NATIVE_CALL GroupAddPermission(AMX* amx, cell* params) {
     return result;
 }
 
-// native lambda_handle:GroupRemovePermission(pGroup, pPermission);
+// native lambda_handle:lx_group_remove_permission(pGroup, pPermission);
 static cell AMX_NATIVE_CALL GroupRemovePermission(AMX* amx, cell* params)
 {
     enum args { arg_group = 1, arg_permission = 2 };
@@ -204,7 +210,7 @@ static cell AMX_NATIVE_CALL GroupRemovePermission(AMX* amx, cell* params)
     return result;
 }
 
-// native lambda_handle:GroupClearPermissions(pGroup);
+// native lambda_handle:lx_group_clear_permissions(pGroup);
 static cell AMX_NATIVE_CALL GroupClearPermissions(AMX* amx, cell* params)
 {
     enum args { arg_group = 1 };
@@ -227,7 +233,7 @@ static cell AMX_NATIVE_CALL GroupClearPermissions(AMX* amx, cell* params)
     return lambda_Error;
 }
 
-// native GroupFindPermission(pGroup, pPermission);
+// native lx_group_find_permission(pGroup, pPermission);
 static cell AMX_NATIVE_CALL GroupFindPermission(AMX* amx, cell* params)
 {
     enum args { arg_group = 1, arg_permission = 2 };
@@ -249,7 +255,7 @@ static cell AMX_NATIVE_CALL GroupFindPermission(AMX* amx, cell* params)
     return group->findPermission(permission);
 }
 
-// native GroupPermissionCount(pGroup);
+// native lx_group_permission_count(pGroup);
 static cell AMX_NATIVE_CALL GroupPermissionCount(AMX* amx, cell* params)
 {
     enum args { arg_group = 1};
@@ -264,7 +270,7 @@ static cell AMX_NATIVE_CALL GroupPermissionCount(AMX* amx, cell* params)
     return group->getPermissionCount();
 }
 
-// native GroupGetImmunity(pGroup);
+// native lx_group_get_immunity(pGroup);
 static cell AMX_NATIVE_CALL GroupGetImmunity(AMX* amx, cell* params)
 {
     enum args { arg_group = 1 };
@@ -279,7 +285,7 @@ static cell AMX_NATIVE_CALL GroupGetImmunity(AMX* amx, cell* params)
     return (cell)group->getImmunity();
 }
 
-// native lambda_handle:GroupSetImmunity(pGroup, iImmunity);
+// native lambda_handle:lx_group_set_immunity(pGroup, iImmunity);
 static cell AMX_NATIVE_CALL GroupSetImmunity(AMX* amx, cell* params)
 {
     enum args { arg_group = 1, arg_immunity = 2 };
@@ -334,7 +340,7 @@ static cell AMX_NATIVE_CALL GroupSetPrefix(AMX* amx, cell* params)
     return lambda_Done;
 }
 
-// native PermissionCreate(szPermission[]);
+// native lx_permission_create(szPermission[]);
 static cell AMX_NATIVE_CALL PermissionCreate(AMX* amx, cell* params)
 {
     enum args { arg_permission = 1 };
@@ -346,7 +352,7 @@ static cell AMX_NATIVE_CALL PermissionCreate(AMX* amx, cell* params)
     return ptr;
 }
 
-// native PermissionFind(szPermission[]);
+// native lx_permission_find(szPermission[]);
 static cell AMX_NATIVE_CALL PermissionFind(AMX* amx, cell* params)
 {
     enum args { arg_permission = 1 };
@@ -356,7 +362,7 @@ static cell AMX_NATIVE_CALL PermissionFind(AMX* amx, cell* params)
     return (cell)g_AccessMngr->findPermission(name);
 }
 
-// native PermissionGetName(pPermission, szPermission[], iLen);
+// native lx_permission_get_name(pPermission, szPermission[], iLen);
 static cell AMX_NATIVE_CALL PermissionGetName(AMX* amx, cell* params)
 {
     enum args { arg_permission = 1, arg_string = 2, arg_len };
@@ -373,13 +379,13 @@ static cell AMX_NATIVE_CALL PermissionGetName(AMX* amx, cell* params)
     return MF_SetAmxString(amx, params[arg_string], name, params[arg_len]);
 }
 
-// native PermissionGetCount();
+// native lx_permission_size();
 static cell AMX_NATIVE_CALL PermissionGetCount(AMX* amx, cell* params)
 {
     return g_AccessMngr->getPermissionCount(false);
 }
 
-// native lambda_handle:PermissionDestroy(pPermission);
+// native lambda_handle:lx_permission_destroy(pPermission);
 static cell AMX_NATIVE_CALL PermissionDestroy(AMX* amx, cell* params)
 {
     enum args { arg_permission = 1 };
@@ -396,9 +402,12 @@ static cell AMX_NATIVE_CALL PermissionDestroy(AMX* amx, cell* params)
         g_PlayerMngr.at(i)->removePermission(permission);
     }
 
-    for (auto& [key, value] : g_TempMngr)
+    for (auto i = 0; i <= MAX_PLAYERS; i++)
     {
-        value.removePermission(permission);
+        for (auto& [key, value] : g_TempMngr)
+        {
+            value.at(i).removePermission(permission);
+        }
     }
 
     g_AccessMngr->destroyPermission(params[arg_permission]);
@@ -408,7 +417,7 @@ static cell AMX_NATIVE_CALL PermissionDestroy(AMX* amx, cell* params)
 }
 
 
-// native lambda_handle:PermissionClears();
+// native lambda_handle:lx_permission_clears();
 static cell AMX_NATIVE_CALL PermissionClears(AMX* amx, cell* params)
 {
     size_t size = g_AccessMngr->getPermissionCount(true);
@@ -425,9 +434,12 @@ static cell AMX_NATIVE_CALL PermissionClears(AMX* amx, cell* params)
             }
         }
 
-        for (auto& [key, value] : g_TempMngr)
+        for (auto i = 0; i <= MAX_PLAYERS; i++)
         {
-            value.removePermission(permission);
+            for (auto& [key, value] : g_TempMngr)
+            {
+                value.at(i).removePermission(permission);
+            }
         }
 
         g_AccessMngr->destroyPermission(i);
@@ -437,7 +449,7 @@ static cell AMX_NATIVE_CALL PermissionClears(AMX* amx, cell* params)
     return lambda_Done;
 }
 
-// native lambda_handle:PlayerAddGroup(iPlayer, pGroup);
+// native lambda_handle:lx_player_add_group(iPlayer, pGroup);
 static cell AMX_NATIVE_CALL PlayerAddGroup(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_group = 2 };
@@ -463,7 +475,7 @@ static cell AMX_NATIVE_CALL PlayerAddGroup(AMX* amx, cell* params)
     return result;
 }
 
-// native PlayerFindGroup(iPlayer, pGroup);
+// native lx_player_find_group(iPlayer, pGroup);
 static cell AMX_NATIVE_CALL PlayerFindGroup(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_group = 2 };
@@ -482,7 +494,7 @@ static cell AMX_NATIVE_CALL PlayerFindGroup(AMX* amx, cell* params)
     return player->findGroup(group);
 }
 
-// native lambda_handle:PlayerRemoveGroup(iPlayer, pGroup);
+// native lambda_handle:lx_player_remove_group(iPlayer, pGroup);
 static cell AMX_NATIVE_CALL PlayerRemoveGroup(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_group = 2 };
@@ -508,7 +520,7 @@ static cell AMX_NATIVE_CALL PlayerRemoveGroup(AMX* amx, cell* params)
     return result;
 }
 
-// native bool:PlayerClearGroups(iPlayer);
+// native bool:lx_player_clear_groups(iPlayer);
 static cell AMX_NATIVE_CALL PlayerClearGroups(AMX* amx, cell* params)
 {
     enum args { arg_player = 1 };
@@ -527,7 +539,7 @@ static cell AMX_NATIVE_CALL PlayerClearGroups(AMX* amx, cell* params)
     return result;
 }
 
-// native PlayerGetGroupCount(iPlayer);
+// native lx_player_get_group_count(iPlayer);
 static cell AMX_NATIVE_CALL PlayerGetGroupCount(AMX* amx, cell* params)
 {
     enum args { arg_player = 1 };
@@ -539,7 +551,7 @@ static cell AMX_NATIVE_CALL PlayerGetGroupCount(AMX* amx, cell* params)
     return player->getGroupCount();
 }
 
-// native lambda_handle:PlayerAddPermission(iPlayer, pPermission);
+// native lambda_handle:lx_player_add_permission(iPlayer, pPermission);
 static cell AMX_NATIVE_CALL PlayerAddPermission(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_permission = 2 };
@@ -565,7 +577,7 @@ static cell AMX_NATIVE_CALL PlayerAddPermission(AMX* amx, cell* params)
     return result;
 }
 
-// native PlayerFindPermission(iPlayer, pPermission, bool:bGroup);
+// native lx_player_find_permission(iPlayer, pPermission, bool:bGroup);
 static cell AMX_NATIVE_CALL PlayerFindPermission(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_permission = 2, arg_group };
@@ -584,7 +596,7 @@ static cell AMX_NATIVE_CALL PlayerFindPermission(AMX* amx, cell* params)
     return player->findPermission(permission, params[arg_group]);
 }
 
-// native lambda_handle:PlayerRemovePermission(iPlayer, pPermission);
+// native lambda_handle:lx_player_remove_permission(iPlayer, pPermission);
 static cell AMX_NATIVE_CALL PlayerRemovePermission(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_permission = 2 };
@@ -610,7 +622,7 @@ static cell AMX_NATIVE_CALL PlayerRemovePermission(AMX* amx, cell* params)
     return result;
 }
 
-// native bool:PlayerClearPermissions(iPlayer);
+// native bool:lx_player_clear_permissions(iPlayer);
 static cell AMX_NATIVE_CALL PlayerClearPermissions(AMX* amx, cell* params)
 {
     enum args { arg_player = 1 };
@@ -629,7 +641,7 @@ static cell AMX_NATIVE_CALL PlayerClearPermissions(AMX* amx, cell* params)
     return result;
 }
 
-// native bool:PlayerGetPermissionCount(iPlayer, bool: bGroup);
+// native lx_player_get_permission_count(iPlayer, bool: bGroup);
 static cell AMX_NATIVE_CALL PlayerGetPermissionCount(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_group = 2 };
@@ -641,7 +653,7 @@ static cell AMX_NATIVE_CALL PlayerGetPermissionCount(AMX* amx, cell* params)
     return player->getPermissionCount(params[arg_group]);
 }
 
-// native PlayerGetImmunity(iPlayer);
+// native lx_player_get_immunity(iPlayer);
 static cell AMX_NATIVE_CALL PlayerGetImmunity(AMX* amx, cell* params)
 {
     enum args { arg_player = 1 };
@@ -653,7 +665,7 @@ static cell AMX_NATIVE_CALL PlayerGetImmunity(AMX* amx, cell* params)
     return (cell)player->getImmunity();
 }
 
-// native lambda_handle:PlayerSetImmunity(iPlayer, iImmunity);
+// native lambda_handle:lx_player_set_immunity(iPlayer, iImmunity);
 static cell AMX_NATIVE_CALL PlayerSetImmunity(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_immunity = 2 };
@@ -668,7 +680,7 @@ static cell AMX_NATIVE_CALL PlayerSetImmunity(AMX* amx, cell* params)
     return lambda_Done;
 }
 
-// native lambda_handle:lx_player_get_prefix(iPlayer, szPrefix[], iLen)
+// native lambda_handle:lx_player_get_prefix(iPlayer, szPrefix[], iLen);
 static cell AMX_NATIVE_CALL PlayerGetPrefix(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_string = 2, arg_len };
@@ -680,7 +692,7 @@ static cell AMX_NATIVE_CALL PlayerGetPrefix(AMX* amx, cell* params)
     return MF_SetAmxString(amx, params[arg_string], prefix, params[arg_len]);
 }
 
-// native lambda_handle:lx_player_set_prefix(iPlayer, szPrefix[])
+// native lambda_handle:lx_player_set_prefix(iPlayer, szPrefix[]);
 static cell AMX_NATIVE_CALL PlayerSetPrefix(AMX* amx, cell* params)
 {
     enum args { arg_player = 1, arg_string = 2, arg_len };
@@ -695,9 +707,10 @@ static cell AMX_NATIVE_CALL PlayerSetPrefix(AMX* amx, cell* params)
     return lambda_Done;
 }
 
+// native lambda_handle:lx_temp_add_group(pGroup, index = 0);
 static cell AMX_NATIVE_CALL TempAddGroup(AMX* amx, cell* params)
 {
-    enum args { arg_group = 1 };
+    enum args { arg_group = 1, arg_index = 2 };
 
     auto group = g_AccessMngr->findGroup(params[arg_group]);
 
@@ -706,37 +719,84 @@ static cell AMX_NATIVE_CALL TempAddGroup(AMX* amx, cell* params)
         return lambda_InvalidGroup;
     }
 
-    return g_TempMngr[amx].addGroup(group);
+    int id = params[arg_index];
+
+    if (id < 0 || id > MAX_PLAYERS)
+    {
+        id = 0;
+    }
+
+    return g_TempMngr[amx].at(id).addGroup(group);
 }
 
+// native lambda_handle:lx_temp_remove_group(pGroup, index = 0);
 static cell AMX_NATIVE_CALL TempRemoveGroup(AMX* amx, cell* params)
 {
-    enum args { arg_group = 1 };
+    enum args { arg_group = 1, arg_index = 2 };
 
     auto group = g_AccessMngr->findGroup(params[arg_group]);
 
-    return g_TempMngr[amx].removeGroup(group);
+    int id = params[arg_index];
+
+    if (id < 0 || id > MAX_PLAYERS)
+    {
+        id = 0;
+    }
+
+    return g_TempMngr[amx].at(id).removeGroup(group);
 }
 
+// native lambda_handle:lx_temp_copy_groups(iPlayer, index = 0);
 static cell AMX_NATIVE_CALL TempCopyGroups(AMX* amx, cell* params)
 {
-    enum args { arg_player = 1 };
+    enum args { arg_player = 1, arg_index = 2 };
 
     CHECK_PLAYER(params[arg_player]);
     auto& player = g_PlayerMngr.at(params[arg_player]);
 
-    g_TempMngr[amx].copyGroups(player->getGroups());
+    int id = params[arg_index];
+
+    if (id < 0 || id > MAX_PLAYERS)
+    {
+        id = 0;
+    }
+
+    g_TempMngr[amx].at(id).copyGroups(player->getGroups());
     return lambda_Done;
 }
 
+// native bool:lx_temp_clear_groups(index = 0);
 static cell AMX_NATIVE_CALL TempClearGroups(AMX* amx, cell* params)
 {
-    return g_TempMngr[amx].clearGroups();
+    enum args { arg_index = 1 };
+
+    int id = params[arg_index];
+
+    if (id == -1)
+    {
+        for (auto i = 0; i <= MAX_PLAYERS; i++)
+        {
+            if (!g_TempMngr[amx].at(i).clearGroups())
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    else
+    if (id < 0 || id > MAX_PLAYERS)
+    {
+        id = 0;
+    }
+
+    return g_TempMngr[amx].at(id).clearGroups();
 }
 
+// native lambda_handle:lx_temp_add_permission(pPermission, index = 0);
 static cell AMX_NATIVE_CALL TempAddPermission(AMX* amx, cell* params)
 {
-    enum args { arg_permission = 1 };
+    enum args { arg_permission = 1, arg_index = 2 };
 
     auto permission = g_AccessMngr->findPermission(params[arg_permission]);
 
@@ -745,32 +805,79 @@ static cell AMX_NATIVE_CALL TempAddPermission(AMX* amx, cell* params)
         return lambda_InvalidPermission;
     }
 
-    return g_TempMngr[amx].addPermission(permission);
+    int id = params[arg_index];
+
+    if (id < 0 || id > MAX_PLAYERS)
+    {
+        id = 0;
+    }
+
+    return g_TempMngr[amx].at(id).addPermission(permission);
 }
 
+// native lambda_handle:lx_temp_remove_permission(pPermission, index = 0);
 static cell AMX_NATIVE_CALL TempRemovePermission(AMX* amx, cell* params)
 {
-    enum args { arg_permission = 1 };
+    enum args { arg_permission = 1, arg_index = 2 };
 
+    
     auto permission = g_AccessMngr->findPermission(params[arg_permission]);
 
-    return g_TempMngr[amx].removePermission(permission);
+    int id = params[arg_index];
+
+    if (id < 0 || id > MAX_PLAYERS)
+    {
+        id = 0;
+    }
+
+    return g_TempMngr[amx].at(id).removePermission(permission);
 }
 
+// native lambda_handle:lx_temp_copy_permissions(iPlayer, index = 0);
 static cell AMX_NATIVE_CALL TempCopyPermissions(AMX* amx, cell* params)
 {
-    enum args { arg_player = 1 };
+    enum args { arg_player = 1, arg_index = 2};
 
     CHECK_PLAYER(params[arg_player]);
     auto& player = g_PlayerMngr.at(params[arg_player]);
 
-    g_TempMngr[amx].copyPermissions(player->getPermissions());
+    int id = params[arg_index];
+
+    if (id < 0 || id > MAX_PLAYERS)
+    {
+        id = 0;
+    }
+
+    g_TempMngr[amx].at(id).copyPermissions(player->getPermissions());
     return lambda_Done;
 }
 
+// native bool: lx_temp_clear_permissions(index = 0);
 static cell AMX_NATIVE_CALL TempClearPermissions(AMX* amx, cell* params)
 {
-    return g_TempMngr[amx].clearPermissions();
+    enum args { arg_index = 1 };
+
+    int id = params[arg_index];
+
+    if (id == -1)
+    {
+        for (auto i = 0; i <= MAX_PLAYERS; i++)
+        {
+            if (!g_TempMngr[amx].at(i).clearPermissions())
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    else
+    if (id < 0 || id > MAX_PLAYERS)
+    {
+        id = 0;
+    }
+
+    return g_TempMngr[amx].at(id).clearPermissions();
 }
 
 AMX_NATIVE_INFO nativeInfoLambda[] =

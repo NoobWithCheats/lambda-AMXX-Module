@@ -140,11 +140,11 @@ native lx_group_get_immunity(pGroup);
  * Set the group's immunity.
  * 
  * @param pGroup		A pointer to the group.
- * @param immunity      Immunity.
+ * @param iImmunity     Immunity.
  * 
  * @return 				lambda_handle
  */
-native lambda_handle:lx_group_set_immunity(pGroup, immunity);
+native lambda_handle:lx_group_set_immunity(pGroup, iImmunity);
 
 /**
  * Gets the group's prefix.
@@ -340,11 +340,11 @@ native lx_player_get_immunity(iPlayer);
  * Sets immunity to the player.
  * 
  * @param iPlayer		The player's index.
- * @param immunity		Immunity.
+ * @param iImmunity		Immunity.
  * 
  * @return				lambda_handle
  */
-native lambda_handle:lx_player_set_immunity(iPlayer, immunity);
+native lambda_handle:lx_player_set_immunity(iPlayer, iImmunity);
 
 /**
  * Gets the player's prefix.
@@ -375,69 +375,83 @@ native lambda_handle:lx_player_set_prefix(iPlayer, szPrefix[]);
  * Adds a group to a temp array. 
  * 
  * @param pGroup        A pointer to the group.
+ * @param index         temp array id, ranging from 0 to 32
  * 
  * @return              lambda_handle
  */
-native lambda_handle:lx_temp_add_group(pGroup);
+native lambda_handle:lx_temp_add_group(pGroup, index = 0);
 
 /**
  * Removes the group to a temp array. 
  * 
  * @param pGroup        A pointer to the group.
+ * @param index         temp array id, ranging from 0 to 32
  * 
  * @return              lambda_handle
  */
-native lambda_handle:lx_temp_remove_group(pGroup);
+native lambda_handle:lx_temp_remove_group(pGroup, index = 0);
 
 /**
  * Adds groups to the player.
  * 
  * @param iPlayer		The player's index.
+ * @param index         temp array id, ranging from 0 to 32
  * 
  * @return				lambda_handle (lamda_Done)
  */
-native lambda_handle:lx_temp_copy_groups(iPlayer);
+native lambda_handle:lx_temp_copy_groups(iPlayer, index = 0);
 
 /**
  * Removes groups in temp array.
  * 
+ * @param index         temp array id, ranging from -1 to 32.
+ * 
+ * @note using index -1 for removed all arrays
+ * 
  * @return              lambda_handle
  */
-native bool:lx_temp_clear_groups();
+native bool:lx_temp_clear_groups(index = 0);
 
 /**
  * Adds a permission to a temp array. 
  * 
  * @param pPermission   A pointer to the permission.
+ * @param index         temp array id, ranging from 0 to 32
  * 
  * @return              lambda_handle
  */
-native lambda_handle:lx_temp_add_permission(pPermission);
+native lambda_handle:lx_temp_add_permission(pPermission, index = 0);
 
 /**
  * Removes the permissions to a temp array. 
  * 
  * @param pPermission   A pointer to the permission.
+ * @param index         temp array id, ranging from 0 to 32
  * 
  * @return              lambda_handle
  */
-native lambda_handle:lx_temp_remove_permission(pPermission);
+native lambda_handle:lx_temp_remove_permission(pPermission, index = 0);
 
 /**
  * Adds permissions to the player.
  * 
  * @param iPlayer		The player's index.
+ * @param index         temp array id, ranging from 0 to 32
  * 
  * @return				lambda_handle (lamda_Done)
  */
-native lambda_handle:lx_temp_copy_permissions(iPlayer);
+native lambda_handle:lx_temp_copy_permissions(iPlayer, index = 0);
 
 /**
  * Removes permissions in temp array.
  * 
+ * @param index         temp array id, ranging from -1 to 32
+ * 
+ * @note using index -1 for removed all arrays
+ * 
  * @return              lambda_handle
  */
-native bool: lx_temp_clear_permissions();
+native bool: lx_temp_clear_permissions(index = 0);
 /*---------------------------------------------------------------------------------------------------*/
 //                                             Forwards                                              //
 /*---------------------------------------------------------------------------------------------------*/
