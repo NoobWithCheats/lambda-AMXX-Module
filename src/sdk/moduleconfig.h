@@ -26,7 +26,7 @@
  *   to add multiple entries.
  */
 #define MODULE_NAME "Lambda"
-#define MODULE_VERSION "0.5.0a"
+#define MODULE_VERSION "0.6.0a"
 #define MODULE_AUTHOR "[GM] NWC"
 #define MODULE_URL "https://github.com/NoobWithCheats/lambda-AMXX-Module"
 #define MODULE_LOGTAG "lambda"
@@ -38,7 +38,7 @@
 #ifdef __DATE__
 #define MODULE_DATE __DATE__
 #else // __DATE__
-#define MODULE_DATE "August 2025"
+#define MODULE_DATE "Decebmer 2025"
 #endif // __DATE__
 
 // metamod plugin?
