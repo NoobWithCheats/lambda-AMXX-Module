@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.15)
 project(Lambda
-        VERSION        0.6.0
-        DESCRIPTION    "Permission system AMXX plugins"
+        VERSION        0.7.0
+        DESCRIPTION    "ACL system AMXX plugins"
         HOMEPAGE_URL   "https://github.com/NoobWithCheats/lambda-AMXX-Module"
         LANGUAGES      CXX
 )
