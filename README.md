@@ -54,8 +54,20 @@ Visual Studio 2017 (C++17 standard) and later
 <pre>
 cmake >= 3.15
 GCC >= 9.4 (Optional)
-ninja-build
 </pre>
 
-### Building
+## Building
+#### Windows
 Use `Visual Studio` to build, open the module, select `CMakeLists.txt`, and use `Release` or `Debug` in the list of solution configurations.
+
+#### Linux
+<pre>
+sudo apt update
+sudo apt install build-essential gcc-multilib g++-multilib cmake
+git clone https://github.com/NoobWithCheats/lambda-AMXX-Module.git
+cd lambda-AMXX-Module
+mkdir Release
+cd Release
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make lambda
+</pre>
