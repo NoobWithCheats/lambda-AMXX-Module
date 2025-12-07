@@ -59,8 +59,6 @@ lambda_handle GroupMngr::clearPermissions()
 
 std::shared_ptr<std::string> GroupMngr::getPermission(size_t index) const
 {
-    --index;
-
     return *next(m_permissions.begin(), index);
 }
 size_t GroupMngr::getPermissionCount() const
@@ -378,8 +376,6 @@ lambda_handle PlayerMngr::clearGroups()
 
 std::shared_ptr<GroupMngr> PlayerMngr::getGroup(size_t index) const
 {
-    --index;
-
     return *next(m_groups.begin(), index);
 }
 
@@ -469,8 +465,6 @@ size_t PlayerMngr::getPermissionCount(bool group) const
 
 std::shared_ptr<std::string> PlayerMngr::getPermission(size_t index) const
 {
-    --index;
-
     return *next(m_permissions.begin(), index);
 }
 
@@ -554,8 +548,6 @@ size_t tempMngr::getGroupCount() const
 
 std::shared_ptr<GroupMngr> tempMngr::getGroup(size_t index) const
 {
-    --index;
-
     return *next(m_groups.begin(), index);
 }
 
