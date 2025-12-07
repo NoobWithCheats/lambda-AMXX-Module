@@ -617,7 +617,7 @@ native lambda_handle:lx_temp_copy_permissions(iPlayer, index = 0);
  * @return 				lambdlambda_Done - permissions removed
  * @return              lambda_Error - system error (please report it)
  */
-native bool: lx_temp_clear_permissions(index = 0);
+native lambda_handle:lx_temp_clear_permissions(index = -1);
 /*---------------------------------------------------------------------------------------------------*/
 //                                             Forwards                                              //
 /*---------------------------------------------------------------------------------------------------*/
